@@ -180,9 +180,16 @@ RCT_EXPORT_METHOD(printRawData:(NSString *)text
         BOOL cut = (BOOL)[cutPtr intValue];
         
         !connected_ip ? [NSException raise:@"Invalid connection" format:@"Can't connect to printer"] : nil;
+    
+        NSMutableString     *hexString  = [NSMutableString stringWithCapacity:([text length] * 2)];
+        for(int i = 0; i < [text length]; i++){
+            [hexString appendFormat:@"%02x", [text characterAtIndex:i]];
+        }
         
         // [[PrinterSDK defaultPrinterSDK] printTestPaper];
-        [[PrinterSDK defaultPrinterSDK] printText:text];
+        [[PrinterSDK defaultPrinterSDK] sendHex:hexString];
+        // [[PrinterSDK defaultPrinterSDK] printTestPaper];
+        // [[PrinterSDK defaultPrinterSDK] printText:text];
         beep ? [[PrinterSDK defaultPrinterSDK] beep] : nil;
         cut ? [[PrinterSDK defaultPrinterSDK] cutPaper] : nil;
     } @catch (NSException *exception) {
